@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect four</title>
+</head>
+<style>
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        /* Ensure full viewport height */
+        margin: 0;
+        /* Remove default margin */
+        background-color: #2b273f;
+
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+
+<body>
+    <canvas id="canvas">
+    </canvas>
+</body>
+<script>
+    let canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext("2d");
+    let gameboardW = 640;
+    let gameboardH = 550;
+
+    function canvasSize() {
+        let s = Math.min(window.innerWidth, window.innerHeight)
+        canvas.width = s;
+        canvas.height = s;
+        console.log(s);
+    }
+    window.addEventListener("resize", canvasSize);
+    canvasSize();
+    ctx.fillStyle = "#2d69a4"
+    ctx.fillRect((canvas.width / 2) - (gameboardW / 2), (canvas.height / 2) - (gameboardH / 2), gameboardW, gameboardH);
+
+    for (let i = 0; i < 7; i++) {
+        for (let j = 0; j < 6; j++) {
+            ctx.beginPath();
+            ctx.arc((canvas.width / 2) - (gameboardW / 2) + 50 + (i * 90), (canvas.height / 2) - (gameboardH / 2) + 50 + (j * 90), 35, 0, 2 * Math.PI);
+            ctx.fillStyle = "#b2b2b2";
+            ctx.fill();
+        }
+    }
+</script>
+
+</html>
