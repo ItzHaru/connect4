@@ -34,6 +34,13 @@
     let ctx = canvas.getContext("2d");
     let gameboardW = 640;
     let gameboardH = 550;
+    let clicked = false;
+    let mouse = {
+        x: 0,
+        y: 0,
+    }
+
+    window.addEventListener("resize", canvasSize);
 
     function canvasSize() {
         let s = Math.min(window.innerWidth, window.innerHeight)
@@ -41,19 +48,68 @@
         canvas.height = s;
         console.log(s);
     }
-    window.addEventListener("resize", canvasSize);
-    canvasSize();
-    ctx.fillStyle = "#2d69a4"
-    ctx.fillRect((canvas.width / 2) - (gameboardW / 2), (canvas.height / 2) - (gameboardH / 2), gameboardW, gameboardH);
 
-    for (let i = 0; i < 7; i++) {
-        for (let j = 0; j < 6; j++) {
-            ctx.beginPath();
-            ctx.arc((canvas.width / 2) - (gameboardW / 2) + 50 + (i * 90), (canvas.height / 2) - (gameboardH / 2) + 50 + (j * 90), 35, 0, 2 * Math.PI);
-            ctx.fillStyle = "#b2b2b2";
-            ctx.fill();
+    canvasSize();
+
+    function main() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#2d69a4"
+        ctx.beginPath();
+        ctx.roundRect(canvas.width / 2 - gameboardW / 2, canvas.height / 2 - gameboardH / 2, gameboardW, gameboardH, 20);
+        ctx.fill();
+
+        for (let i = 0; i < 7; i++) {
+            for (let j = 0; j < 6; j++) {
+                ctx.beginPath();
+                ctx.arc(canvas.width / 2 - gameboardW / 2 + 50 + i * 90, canvas.height / 2 - gameboardH / 2 + 50 + j * 90, 35, 0, 2 * Math.PI);
+                ctx.fillStyle = "#b2b2b2";
+                ctx.fill();
+            }
         }
+
+        for (let i = 0; i < 7; i++) {
+            if (mouseOver({
+                x: canvas.width / 2 - gameboardW / 2 + 5 + i * 90,
+                y: 0,
+                w: 90,
+                h: canvas.height / 2 + gameboardH / 2
+            })) {
+                ctx.beginPath();
+                ctx.arc(canvas.width / 2 - gameboardW / 2 + 50 + i * 90, canvas.height / 2 - gameboardH / 2 - 50, 35, 0, 2 * Math.PI);
+                ctx.fillStyle = "red";
+                ctx.fill();
+                if (clicked == true) {
+                    console.log(i);
+                }
+            }
+        }
+
+        setTimeout(main, 16.6);
     }
+
+    main();
+
+    function mouseOver(rectangle) {
+        return mouse.x > rectangle.x && mouse.y > rectangle.y && mouse.x < rectangle.x + rectangle.w && mouse.y < rectangle.y + rectangle.h
+    }
+
+    document.addEventListener("mousedown", (e) => {
+        if (e.button == 0) {
+            clicked = true;
+        }
+    })
+
+    document.addEventListener("mouseup", (e) => {
+        if (e.button == 0) {
+            clicked = false;
+        }
+    })
+
+    canvas.addEventListener("mousemove", (e) => {
+        mouse.x = e.offsetX;
+        mouse.y = e.offsetY;
+    })
+
 </script>
 
 </html>
