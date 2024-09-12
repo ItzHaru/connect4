@@ -35,9 +35,19 @@
     let gameboardW = 640;
     let gameboardH = 550;
     let clicked = false;
+    let color = "red";
     let mouse = {
         x: 0,
         y: 0,
+    }
+
+    let slots = [];
+
+    for (let i = 0; i < 7; i++) {
+        slots.push([]);
+        for (let j = 0; j < 6; j++) {
+            slots[i].push("empty");
+        }
     }
 
     window.addEventListener("resize", canvasSize);
@@ -46,10 +56,15 @@
         let s = Math.min(window.innerWidth, window.innerHeight)
         canvas.width = s;
         canvas.height = s;
-        console.log(s);
     }
 
     canvasSize();
+
+    let disc = {
+        x: 0,
+        y: (canvas.height / 2) - (gameboardH / 2) - 50,
+        r: 35,
+    }
 
     function main() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -62,7 +77,15 @@
             for (let j = 0; j < 6; j++) {
                 ctx.beginPath();
                 ctx.arc(canvas.width / 2 - gameboardW / 2 + 50 + i * 90, canvas.height / 2 - gameboardH / 2 + 50 + j * 90, 35, 0, 2 * Math.PI);
-                ctx.fillStyle = "#b2b2b2";
+                switch (slots[i][j]) {
+                    case "red": ctx.fillStyle = "#e25656";
+                        break;
+                    case "yellow": ctx.fillStyle = "#ecdd5e";
+                        break;
+                    case "empty": ctx.fillStyle = "#b2b2b2";
+                        break;
+                    default: throw slots[i][j];
+                }
                 ctx.fill();
             }
         }
@@ -75,19 +98,33 @@
                 h: canvas.height / 2 + gameboardH / 2
             })) {
                 ctx.beginPath();
-                ctx.arc(canvas.width / 2 - gameboardW / 2 + 50 + i * 90, canvas.height / 2 - gameboardH / 2 - 50, 35, 0, 2 * Math.PI);
-                ctx.fillStyle = "red";
+                ctx.arc(canvas.width / 2 - gameboardW / 2 + 50 + i * 90, disc.y, disc.r, 0, 2 * Math.PI);
+                ctx.fillStyle = color == "red" ? "#e25656" : "#ecdd5e";
                 ctx.fill();
                 if (clicked == true) {
-                    console.log(i);
+                    putDisc(i, color);
+                    if (color == "red") {
+                        color = "yellow";
+                    } else if (color == "yellow") {
+                        color = "red";
+                    }
                 }
             }
         }
-
         setTimeout(main, 16.6);
+        clicked = false;
     }
 
     main();
+
+    function putDisc(position, color) {
+        for (let i = 6; i >= 0; i--) {
+            if (slots[position][i] == "empty") {
+                slots[position][i] = color;
+                break;
+            }
+        }
+    }
 
     function mouseOver(rectangle) {
         return mouse.x > rectangle.x && mouse.y > rectangle.y && mouse.x < rectangle.x + rectangle.w && mouse.y < rectangle.y + rectangle.h
