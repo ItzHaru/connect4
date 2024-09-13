@@ -35,12 +35,12 @@
     let gameboardW = 640;
     let gameboardH = 550;
     let clicked = false;
+    let end = false;
     let color = "red";
     let mouse = {
         x: 0,
         y: 0,
     }
-
     let slots = [];
 
     for (let i = 0; i < 7; i++) {
@@ -102,26 +102,57 @@
                 ctx.fillStyle = color == "red" ? "#e25656" : "#ecdd5e";
                 ctx.fill();
                 if (clicked == true) {
-                    putDisc(i, color);
-                    if (color == "red") {
-                        color = "yellow";
-                    } else if (color == "yellow") {
-                        color = "red";
-                    }
+                    putDisc(i);
                 }
             }
         }
+
+        win();
         setTimeout(main, 16.6);
         clicked = false;
     }
 
     main();
 
-    function putDisc(position, color) {
+    function putDisc(column) {
         for (let i = 6; i >= 0; i--) {
-            if (slots[position][i] == "empty") {
-                slots[position][i] = color;
+            if (slots[column][i] == "empty") {
+                slots[column][i] = color;
+                if (color == "red") {
+                    color = "yellow";
+                } else if (color == "yellow") {
+                    color = "red";
+                }
                 break;
+            }
+        }
+    }
+
+    function win() {
+        for (let row = 0; row < 6; row++) {
+            for (let i = 0; i < 4; i++) {
+                let currentDisc = slots[i][row];
+                if (currentDisc != "empty" && currentDisc == slots[i + 1][row] && currentDisc == slots[i + 2][row] && currentDisc == slots[i + 3][row]) {
+                    end = true;
+                }
+            }
+        }
+        for (let column = 0; column < 7; column++) {
+            for (let i = 0; i < 3; i++) {
+                let currentDisc = slots[column][i];
+                if (currentDisc != "empty" && currentDisc == slots[column][i + 1] && currentDisc == slots[column][i + 2] && currentDisc == slots[column][i + 3]) {
+                    end = true;
+                }
+            }
+        }
+        for (let row = 0; row < 6; row++) {
+            for (let i = 0; i < 4; i++) {
+                let currentDisc = slots[i][row];
+                if (currentDisc != "empty" && currentDisc == slots[i + 1][row + 1] && currentDisc == slots[i + 2][row + 2] && currentDisc == slots[i + 3][row + 3]) {
+                    end = true;
+                } else if (currentDisc != "empty" && currentDisc == slots[i + 1][row - 1] && currentDisc == slots[i + 2][row - 2] && currentDisc == slots[i + 3][row - 3]) {
+                    end = true;
+                }
             }
         }
     }
